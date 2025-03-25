@@ -34,10 +34,11 @@ async def home(request: Request):
 
 @app.get("/predict", response_class=HTMLResponse)
 async def predict(request: Request, code: str = "9104.T"):
-    df = yf.download(code, period="90d")
+    # データ取得（group_by="column" を明示）
+    df = yf.download(code, period="90d", group_by="column")
 
-    # --- 銘柄名が列に含まれていたら取り除く ---
-    df.columns = [col.split(" ")[0] for col in df.columns]
+    # 列名がタプルだった場合に備えて修正
+    df.columns = [col[0] if isinstance(col, tuple) else col for col in df.columns]
 
     if df.empty:
         return templates.TemplateResponse("index.html", {
