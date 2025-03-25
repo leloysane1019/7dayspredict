@@ -36,8 +36,8 @@ async def home(request: Request):
 async def predict(request: Request, code: str = "9104.T"):
     df = yf.download(code, period="90d")
 
-    # --- ここで列名を固定化（銘柄コード入りを除去） ---
-    df.columns = ["Open", "High", "Low", "Close", "Adj Close", "Volume"]
+    # --- 銘柄名が列に含まれていたら取り除く ---
+    df.columns = [col.split(" ")[0] for col in df.columns]
 
     if df.empty:
         return templates.TemplateResponse("index.html", {
