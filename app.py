@@ -11,8 +11,8 @@ from ta.trend import MACD
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
-# モデル読み込み
-model = joblib.load("xgb_model_7day.pkl")
+# モデル読み込み（どの銘柄にも対応）
+model = joblib.load("xgb_model_7day_universal.pkl")
 
 # 学習時と同じ特徴量の列
 feature_columns = [
@@ -31,13 +31,12 @@ async def home(request: Request):
         "error": None
     })
 
-
 @app.get("/predict", response_class=HTMLResponse)
 async def predict(request: Request, code: str = "9104.T"):
-    # データ取得（group_by="column" を明示）
+    # データ取得（group_by="column"で銘柄名付き回避）
     df = yf.download(code, period="90d", group_by="column")
 
-    # 列名がタプルだった場合に備えて修正
+    # 列名がタプル形式なら対応
     df.columns = [col[0] if isinstance(col, tuple) else col for col in df.columns]
 
     if df.empty:
@@ -67,7 +66,7 @@ async def predict(request: Request, code: str = "9104.T"):
 
         df = df.dropna()
 
-        # 最新データ1件で予測
+        # 最新の1日分の特徴量で予測
         latest = df.iloc[[-1]]
         X_pred = latest[feature_columns]
         y_pred = model.predict(X_pred)[0]
