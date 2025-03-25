@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>7日後株価予測</title>
+</head>
+<body>
+    <h1>7日後の株価予測</h1>
+    <form action="/predict" method="get">
+        <label>銘柄コード（例：9104.T）</label>
+        <input type="text" name="code" value="{{ code }}">
+        <button type="submit">予測する</button>
+    </form>
+
+    {% if prediction %}
+        <h2>{{ code }} の予測株価：<strong>{{ prediction }} 円</strong></h2>
+    {% elif error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+</body>
+</html>
