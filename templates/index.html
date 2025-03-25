@@ -1,21 +1,58 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <title>7日後株価予測</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">  <!-- これが超重要！ -->
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 1rem;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 1rem;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1rem;
+        }
+
+        h1, h2 {
+            text-align: center;
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 1rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <h1>7日後の株価予測</h1>
+
     <form action="/predict" method="get">
-        <label>銘柄コード（例：9104.T）</label>
-        <input type="text" name="code" value="{{ code }}">
+        <label for="code">銘柄コード（例：9104.T）</label>
+        <input type="text" id="code" name="code" value="{{ code }}">
         <button type="submit">予測する</button>
     </form>
 
     {% if prediction %}
         <h2>{{ code }} の予測株価：<strong>{{ prediction }} 円</strong></h2>
     {% elif error %}
-        <p style="color: red;">{{ error }}</p>
+        <p class="error">{{ error }}</p>
     {% endif %}
 </body>
 </html>
